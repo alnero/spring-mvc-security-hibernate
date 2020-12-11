@@ -6,6 +6,10 @@ import javax.persistence.*;
 
 @Entity
 public class UserAuthority implements GrantedAuthority {
+    public enum Role {
+        USER, ADMIN
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;

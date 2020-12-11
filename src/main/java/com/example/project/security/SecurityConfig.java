@@ -1,6 +1,6 @@
 package com.example.project.security;
 
-import com.example.project.model.UserRole;
+import com.example.project.model.UserAuthority;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,10 +35,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/users").hasAuthority(UserRole.ADMIN.name())
-                .antMatchers("/users/add").hasAuthority(UserRole.ADMIN.name())
-                .antMatchers("/users/edit").hasAuthority(UserRole.ADMIN.name())
-                .antMatchers("/users/delete").hasAuthority(UserRole.ADMIN.name())
+                .antMatchers("/users").hasAuthority(UserAuthority.Role.ADMIN.name())
+                .antMatchers("/users/").hasAuthority(UserAuthority.Role.ADMIN.name())
+                .antMatchers("/users/add").hasAuthority(UserAuthority.Role.ADMIN.name())
+                .antMatchers("/users/edit").hasAuthority(UserAuthority.Role.ADMIN.name())
+                .antMatchers("/users/delete").hasAuthority(UserAuthority.Role.ADMIN.name())
                 .anyRequest().authenticated();
 
         http.formLogin()

@@ -2,7 +2,6 @@ package com.example.project;
 
 import com.example.project.model.User;
 import com.example.project.model.UserAuthority;
-import com.example.project.model.UserRole;
 import com.example.project.service.UserAuthorityService;
 import com.example.project.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +23,8 @@ public class DbInit {
     @PostConstruct
     private void postConstruct() {
         // add authorities to DB
-        for (UserRole userRole : UserRole.values()) {
-            userAuthorityService.add(new UserAuthority(userRole.name()));
+        for (UserAuthority.Role role : UserAuthority.Role.values()) {
+            userAuthorityService.add(new UserAuthority(role.name()));
         }
 
         // add admin to DB
@@ -34,7 +33,7 @@ public class DbInit {
                 "admin",
                 (byte) 1);
         admin.setPassword("admin");
-        admin.setUserAuthority(userAuthorityService.getUserAuthorityByName(UserRole.ADMIN.name()));
+        admin.setUserAuthority(userAuthorityService.getUserAuthorityByName(UserAuthority.Role.ADMIN.name()));
         userService.add(admin);
     }
 }
