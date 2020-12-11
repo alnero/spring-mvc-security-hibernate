@@ -35,11 +35,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/users").hasAuthority(UserAuthority.Role.ADMIN.name())
-                .antMatchers("/users/").hasAuthority(UserAuthority.Role.ADMIN.name())
-                .antMatchers("/users/add").hasAuthority(UserAuthority.Role.ADMIN.name())
-                .antMatchers("/users/edit").hasAuthority(UserAuthority.Role.ADMIN.name())
-                .antMatchers("/users/delete").hasAuthority(UserAuthority.Role.ADMIN.name())
+                .antMatchers("/users/{id:\\d+}").hasAnyAuthority(UserAuthority.Role.USER.name(), UserAuthority.Role.ADMIN.name())
+                .antMatchers("/users/**").hasAuthority(UserAuthority.Role.ADMIN.name())
                 .anyRequest().authenticated();
 
         http.formLogin()

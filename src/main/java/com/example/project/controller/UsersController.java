@@ -33,7 +33,7 @@ public class UsersController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("(@successUserHandler.currentAuthenticatedUser().id == #id && hasAuthority('USER')) || hasAuthority('ADMIN')")
+    @PreAuthorize("(@successUserHandler.currentAuthenticatedUser().id == #id) || hasAuthority('ADMIN')")
     public String showUser(@PathVariable Long id, ModelMap model) {
         User user = userService.getById(id);
         model.addAttribute("user", user);
