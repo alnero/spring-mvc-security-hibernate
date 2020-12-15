@@ -2,6 +2,7 @@ package com.example.project.controller;
 
 import com.example.project.model.User;
 import com.example.project.model.UserAuthority;
+import com.example.project.security.SuccessUserHandler;
 import com.example.project.service.UserAuthorityService;
 import com.example.project.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +19,13 @@ import java.util.List;
 public class UsersController {
     private UserService userService;
     private UserAuthorityService userAuthorityService;
+    private SuccessUserHandler successUserHandler;
 
     @Autowired
-    public UsersController(UserService userService, UserAuthorityService userAuthorityService) {
+    public UsersController(UserService userService, UserAuthorityService userAuthorityService, SuccessUserHandler successUserHandler) {
         this.userService = userService;
         this.userAuthorityService = userAuthorityService;
+        this.successUserHandler = successUserHandler;
     }
 
     @GetMapping()
@@ -33,11 +36,21 @@ public class UsersController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("(@successUserHandler.currentAuthenticatedUser().id == #id) || hasAuthority('ADMIN')")
     public String showUser(@PathVariable Long id, ModelMap model) {
-        User user = userService.getById(id);
-        model.addAttribute("user", user);
-        return "user";
+        User authenticatedUser = successUserHandler.currentAuthenticatedUser();
+        Long authenticatedUserId = authenticatedUser.getId();
+        String userAuthority = authenticatedUser.getAuthorities().iterator().next().getAuthority();
+        if (UserAuthority.Role.ADMIN.name().equals(userAuthority) && !id.equals(authenticatedUserId)) {
+            User user = userService.getById(id);
+            model.addAttribute("user", user);
+            return "user";
+        }
+        if (id.equals(authenticatedUserId)) {
+            model.addAttribute("user", authenticatedUser);
+            return "user";
+        } else {
+            return "redirect:/users/" + authenticatedUserId;
+        }
     }
 
     @GetMapping("/add")
